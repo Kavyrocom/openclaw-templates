@@ -1,6 +1,14 @@
 # openclaw-templates
 
-> Systeme de templates pour agents OpenClaw, complementaire aux skills.
+> Procedures metier reutilisables pour agents OpenClaw, complementaires aux skills.
+
+## A quoi ca sert
+
+Les agents OpenClaw ont des **skills** (outils techniques) mais pas toujours de cadre pour les **procedures metier**. Un skill dit comment appeler une API. Mais il ne dit pas dans quel ordre enchainer 4 skills, quel outil choisir quand il y en a plusieurs, ou quelles regles metier respecter avant de livrer.
+
+Un template est un fichier `.md` qui decrit une procedure complete : declencheur, etapes dans l'ordre, regles, et erreurs a eviter. L'agent le lit avant d'executer et le suit comme une checklist.
+
+Cas concret : sur le projet [Kavyro](https://github.com/Kavyrocom) (communaute tech/IA), un agent charge de mettre a jour des pages Notion ouvrait le browser headless (pas de session, timeout, echec) au lieu d'utiliser l'API REST disponible via le skill. Le skill documentait l'API, mais rien n'interdisait le browser. Un template a resolu le probleme en imposant le bon outil.
 
 ## Un skill bien documente ne suffit pas ?
 
@@ -12,9 +20,9 @@ Un template resout des problemes qu'un skill seul ne peut pas couvrir :
 
 **1. La tache implique plusieurs skills enchaines**
 
-Exemple : creer une landing page necessite 4 skills dans un ordre precis (design-system, blueprint, elementor, review). Chaque skill sait faire sa partie, mais aucun ne connait le pipeline complet. Le template orchestre l'enchainement.
+Exemple : deployer un site complet necessite plusieurs skills dans un ordre precis (creation serveur, configuration DNS, installation CMS, SEO de base, verification). Chaque skill sait faire sa partie, mais aucun ne connait le pipeline complet. Le template orchestre l'enchainement et s'assure qu'aucune etape n'est sautee.
 
-Un sous-fichier dans le skill `elementor-page` ne peut pas decrire les etapes qui precedent et suivent son propre usage.
+Un sous-fichier dans un skill ne peut pas decrire les etapes qui precedent et suivent son propre usage.
 
 **2. L'agent doit choisir entre plusieurs outils**
 
@@ -24,7 +32,7 @@ Un SKILL.md ne peut pas interdire l'usage d'un autre outil qui n'est pas dans so
 
 **3. La procedure inclut des regles metier transversales**
 
-Exemple : avant de publier du contenu pour un projet, il faut lire le guide de style, verifier la coherence avec la strategie, respecter un format precis. Ces regles n'appartiennent a aucun skill en particulier.
+Exemple : avant de publier du contenu pour un projet, il faut lire le guide de style, verifier la coherence avec la strategie, inclure des elements specifiques (blocs de code, exemples concrets). Ces regles n'appartiennent a aucun skill en particulier, elles sont liees au projet.
 
 ### Arbre de decision
 
