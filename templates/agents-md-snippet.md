@@ -1,6 +1,6 @@
-# Snippet AGENTS.md, bloc a copier dans vos fichiers AGENTS.md
+# Snippet AGENTS.md
 
-Copiez ce bloc dans le fichier AGENTS.md de chaque agent qui doit utiliser les templates.
+Copier ce bloc dans le AGENTS.md de chaque agent. C'est ce bloc qui active le systeme.
 
 ---
 
@@ -11,16 +11,20 @@ Chemin : `/home/node/.openclaw/templates/`
 
 ### Avant d'executer une tache recurrente
 1. Lister les templates : `ls /home/node/.openclaw/templates/`
-2. Si un template correspond a la tache, le LIRE et le SUIVRE integralement
-3. Le template a priorite sur l'improvisation, suivre chaque etape
+2. Si un template correspond, le LIRE et le SUIVRE integralement
+3. Le template a priorite sur l'improvisation
 
-### Apres une tache recurrente sans template
-Si tu viens d'executer une tache qui reviendra (meme type, meme contexte) et qu'il n'y a pas de template :
+### Auto-creation
+Apres une tache recurrente sans template :
 1. Creer le template dans `/home/node/.openclaw/templates/NOM.md`
 2. Format : voir `/home/node/.openclaw/templates/README.md`
-3. Signaler a l'utilisateur : "J'ai cree le template NOM pour cette procedure"
+3. Signaler : "J'ai cree le template NOM pour cette procedure"
 
-### Mise a jour
-Si un template est incomplet ou faux, le corriger IMMEDIATEMENT apres avoir termine la tache.
-Ne pas attendre, ne pas ignorer. Un template obsolete est pire que pas de template.
+### Auto-amelioration
+Apres chaque execution d'un template existant :
+1. Verifier que chaque etape est toujours correcte
+2. Si une etape manque ou est fausse, corriger le template IMMEDIATEMENT
+3. Si une erreur evitable s'est produite, l'ajouter dans "Erreurs frequentes"
+
+Un template qui ne s'ameliore pas est un template mort.
 ```
