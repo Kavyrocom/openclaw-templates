@@ -8,7 +8,7 @@ Les agents OpenClaw ont des **skills** (outils techniques) mais pas toujours de 
 
 Un template est un fichier `.md` qui decrit une procedure complete : declencheur, etapes dans l'ordre, regles, et erreurs a eviter. L'agent le lit avant d'executer et le suit comme une checklist.
 
-Cas concret : sur le projet [Kavyro](https://github.com/Kavyrocom) (communaute tech/IA), un agent charge de mettre a jour des pages Notion ouvrait le browser headless (pas de session, timeout, echec) au lieu d'utiliser l'API REST disponible via le skill. Le skill documentait l'API, mais rien n'interdisait le browser. Un template a resolu le probleme en imposant le bon outil.
+Cas concret : sur le projet [Kavyro](https://kavyro.com) (communaute AutomatisationIA), un agent se charge de mettre à jour des pages Notion ouvrait le browser headless (pas de session, timeout, echec) au lieu d'utiliser l'API REST disponible via le skill. Le skill documentait l'API, mais rien n'interdisait le browser. Un template a resolu le probleme en imposant le bon outil.
 
 ## Un skill bien documente ne suffit pas ?
 
