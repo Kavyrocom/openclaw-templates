@@ -206,7 +206,7 @@ Ces exemples sont a adapter a votre contexte. Copiez-les dans votre dossier `tem
 
 ## Contribuer
 
-Les contributions sont bienvenues. Si vous utilisez OpenClaw et avez developpe des templates utiles :
+Ce projet est maintenu par [Kavyro](https://kavyro.com), communaute francophone AutomatisationIA. Les contributions sont bienvenues. Si vous utilisez OpenClaw et avez developpe des templates utiles :
 
 1. Fork ce repo
 2. Ajoutez votre template dans `examples/` ou proposez une amelioration du systeme
