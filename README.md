@@ -6,7 +6,7 @@
 
 Les agents OpenClaw ont des skills bien documentes (API, scripts, commandes). Mais ils improvisent quand meme. Ils prennent des raccourcis, sautent des etapes, choisissent le mauvais outil. Pas parce qu'ils sont mauvais, mais parce qu'un skill dit **comment** utiliser un outil, pas **quand**, **dans quel ordre**, et **avec quelles regles metier**.
 
-Cas concret : sur le projet [Kavyro](https://kavyro.com) (communaute Automatisation / IA), un agent charge de mettre a jour des pages Notion ouvrait le browser headless (pas de session, timeout, echec) au lieu d'utiliser l'API REST disponible via le skill. Le skill documentait l'API, mais rien n'interdisait le browser. Un template a resolu le probleme en imposant le bon outil.
+Cas concret : sur le projet Kavyro (communaute Automatisation / IA), un agent charge de mettre a jour des pages Notion ouvrait le browser headless (pas de session, timeout, echec) au lieu d'utiliser l'API REST disponible via le skill. Le skill documentait l'API, mais rien n'interdisait le browser. Un template a resolu le probleme en imposant le bon outil.
 
 **openclaw-templates** resout ca : un systeme de procedures installees sur votre instance OpenClaw, que les agents consultent avant d'agir, et qu'ils ameliorent eux-memes apres chaque execution.
 
