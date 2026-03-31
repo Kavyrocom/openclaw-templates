@@ -2,31 +2,57 @@
 
 > Systeme de templates pour agents OpenClaw, complementaire aux skills.
 
-## Pourquoi des templates en plus des skills ?
+## Un skill bien documente ne suffit pas ?
 
-Les skills OpenClaw documentent **comment** utiliser un outil : endpoints API, scripts, commandes, parametres. C'est technique et necessaire.
+Dans la plupart des cas, **si**. Un skill avec un bon SKILL.md couvre 80% des besoins : il dit comment appeler l'API, quels scripts utiliser, quels parametres passer. Si votre procedure concerne un seul skill, documentez-la directement dans le skill (sous-fichier, section supplementaire dans le SKILL.md). Pas besoin de template.
 
-Mais un skill ne dit pas :
+### Quand un template devient necessaire
 
-- **Quand** choisir cet outil plutot qu'un autre
-- **Dans quel ordre** enchainer les etapes d'une tache metier
-- **Quels pieges** eviter dans un contexte precis
-- **Quel standard de qualite** respecter pour le livrable
+Un template resout des problemes qu'un skill seul ne peut pas couvrir :
 
-Resultat concret : un agent qui a le skill Notion (API REST) decide quand meme d'ouvrir le browser pour acceder a Notion, parce que le skill ne lui dit pas "dans ce contexte, utilise l'API, pas le browser". Un agent qui a les skills de design saute 2 etapes sur 4 parce que rien ne lui impose l'ordre.
+**1. La tache implique plusieurs skills enchaines**
 
-**Le template comble ce vide.** Il decrit la procedure metier complete : quand l'appliquer, quelles etapes suivre, dans quel ordre, avec quels standards. Le skill reste la reference technique, le template est le cadre operationnel.
+Exemple : creer une landing page necessite 4 skills dans un ordre precis (design-system, blueprint, elementor, review). Chaque skill sait faire sa partie, mais aucun ne connait le pipeline complet. Le template orchestre l'enchainement.
 
-### En resume
+Un sous-fichier dans le skill `elementor-page` ne peut pas decrire les etapes qui precedent et suivent son propre usage.
 
-| | Skill | Template |
+**2. L'agent doit choisir entre plusieurs outils**
+
+Exemple : un agent a acces a Notion via l'API REST (skill) ET via le browser. Le skill Notion documente l'API, mais ne dit pas "dans ce contexte, utilise l'API, pas le browser". L'agent prend le chemin le plus simple (browser), qui echoue (pas de session active). Le template impose le bon choix.
+
+Un SKILL.md ne peut pas interdire l'usage d'un autre outil qui n'est pas dans son scope.
+
+**3. La procedure inclut des regles metier transversales**
+
+Exemple : avant de publier du contenu pour un projet, il faut lire le guide de style, verifier la coherence avec la strategie, respecter un format precis. Ces regles n'appartiennent a aucun skill en particulier.
+
+### Arbre de decision
+
+```
+Procedure concerne un seul skill ?
+    oui -> Documenter dans le SKILL.md (sous-fichier ou section)
+    non -> Creer un template
+
+L'agent doit choisir entre plusieurs outils ?
+    oui -> Template (impose le bon choix)
+    non -> SKILL.md suffit
+
+La procedure inclut des regles metier hors scope technique ?
+    oui -> Template
+    non -> SKILL.md suffit
+```
+
+### Comparaison
+
+| | Skill (SKILL.md) | Template |
 |---|---|---|
-| **Repond a** | "Comment j'appelle cette API ?" | "Quelle procedure je suis pour cette tache ?" |
-| **Contenu** | Endpoints, scripts, commandes | Checklist, regles, ordre des etapes |
-| **Scope** | Un outil | Une tache metier (peut impliquer plusieurs skills) |
-| **Exemple** | "Voici les commandes curl pour Notion" | "Quand on te demande de mettre a jour un projet sur Notion : API REST uniquement, chercher l'ID via search, respecter le rate limit, documenter les modifs" |
+| **Scope** | Un outil, une API | Une tache metier complete |
+| **Quand l'utiliser** | Procedure mono-skill | Procedure multi-skills, choix d'outil, regles metier |
+| **Ou le mettre** | `skills/nom-skill/SKILL.md` | `templates/nom-tache.md` |
+| **Qui le maintient** | L'agent qui utilise le skill | Tout agent qui execute la procedure |
+| **Exemple** | "Voici les commandes curl pour Notion" | "Quand on te demande de mettre a jour un projet, utilise l'API Notion (pas le browser), cherche l'ID via search, respecte le rate limit, documente les modifs" |
 
-Les deux sont complementaires et se referencent mutuellement.
+Les deux coexistent. Le template reference les skills ("lire SKILL.md du skill X avant l'etape Y"), le skill reste la reference technique.
 
 ## Installation
 
@@ -123,11 +149,12 @@ Chaque template est un fichier `.md` avec cette structure :
 - Une procedure a plus de 3 etapes et doit etre reproduite a l'identique
 - Un agent improvise au lieu de suivre un workflow prevu
 
-### Quand NE PAS creer un template
+### Quand NE PAS creer un template (utiliser le skill directement)
 
-- Tache unique, ponctuelle
-- Procedure deja entierement couverte par un SKILL.md existant
-- Information volatile qui change souvent (mettre dans STATE.md ou MEMORY.md)
+- **Tache unique, ponctuelle** : pas de recurrence, pas de template
+- **Procedure mono-skill** : si ca concerne un seul skill, documenter dans le SKILL.md
+- **Le SKILL.md couvre deja la procedure** : ne pas dupliquer, le skill fait reference
+- **Information volatile** : donnees qui changent souvent (mettre dans STATE.md ou MEMORY.md)
 
 ### Bonnes pratiques
 
