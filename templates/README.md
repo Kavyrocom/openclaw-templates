@@ -1,4 +1,4 @@
-# Templates -- Procedures metier agents OpenClaw
+# Templates, procedures metier agents OpenClaw
 
 ## Difference skill vs template
 - **Skill** = outil technique + scripts + comment appeler une API
@@ -36,7 +36,5 @@
 
 ## Index
 
-| Template | Declencheur | Probleme resolu |
-|----------|-------------|-----------------|
-| `notion-projet.md` | Operations Notion sur un projet | Agent utilise le browser au lieu de l'API REST |
-| `landing-page.md` | Creation de landing page / page web | Agent improvise du HTML au lieu de suivre le pipeline design |
+Ce dossier contient vos templates. Ajoutez ici chaque nouveau template cree.
+Voir `../examples/` pour des exemples de templates.

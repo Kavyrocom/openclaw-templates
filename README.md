@@ -1,62 +1,32 @@
-# openclaw-templates -- Systeme de templates pour agents OpenClaw
+# openclaw-templates
 
-> Procedures metier reutilisables pour agents IA OpenClaw -- complementaires aux skills.
+> Systeme de templates pour agents OpenClaw, complementaire aux skills.
 
-## Le probleme
+## Pourquoi des templates en plus des skills ?
 
-Dans une architecture multi-agents OpenClaw, les agents ont des **skills** (outils techniques : API, scripts, commandes) mais pas de cadre pour les **procedures metier**. Resultat :
+Les skills OpenClaw documentent **comment** utiliser un outil : endpoints API, scripts, commandes, parametres. C'est technique et necessaire.
 
-- Un agent charge de mettre a jour une page Notion ouvre le **browser** au lieu d'utiliser l'**API REST** -- parce que le skill dit *comment* appeler l'API, mais pas *quand* et *pourquoi* l'utiliser plutot que le browser
-- Un agent improvise du HTML inline pour creer une landing page au lieu de suivre un pipeline design structure
-- Un agent utilise `python3 -c "..."` inline (bloque par le gateway comme commande obfusquee) au lieu d'ecrire un script fichier
+Mais un skill ne dit pas :
 
-Le point commun : **l'agent connait les outils mais pas la bonne procedure**. Il prend le chemin le plus court, pas le bon.
+- **Quand** choisir cet outil plutot qu'un autre
+- **Dans quel ordre** enchainer les etapes d'une tache metier
+- **Quels pieges** eviter dans un contexte precis
+- **Quel standard de qualite** respecter pour le livrable
 
-Contexte reel : sur le projet Kavyro (communaute tech/IA), l'agent essayait d'acceder a Notion via le browser headless (qui n'a pas de session active) au lieu d'utiliser l'API REST disponible via le skill. Resultat : timeout, erreur, pas de livrable.
+Resultat concret : un agent qui a le skill Notion (API REST) decide quand meme d'ouvrir le browser pour acceder a Notion, parce que le skill ne lui dit pas "dans ce contexte, utilise l'API, pas le browser". Un agent qui a les skills de design saute 2 etapes sur 4 parce que rien ne lui impose l'ordre.
 
-## La solution : templates
+**Le template comble ce vide.** Il decrit la procedure metier complete : quand l'appliquer, quelles etapes suivre, dans quel ordre, avec quels standards. Le skill reste la reference technique, le template est le cadre operationnel.
 
-Un **template** est un fichier `.md` qui decrit une procedure metier complete, avec :
-
-- **Quand** l'utiliser (declencheur)
-- **Checklist** des etapes dans l'ordre
-- **Regles** a respecter
-- **Erreurs frequentes** et comment les eviter
-
-### Difference skill vs template
+### En resume
 
 | | Skill | Template |
 |---|---|---|
-| **Role** | Outil technique | Procedure metier |
-| **Contenu** | API endpoints, scripts, commandes | Checklist, regles, standards qualite |
-| **Exemple** | "Voici comment appeler l'API Notion" | "Quand on te demande de mettre a jour Kavyro sur Notion, voici la procedure complete" |
-| **Quand le lire** | Avant d'utiliser un outil specifique | Avant d'executer une tache recurrente |
+| **Repond a** | "Comment j'appelle cette API ?" | "Quelle procedure je suis pour cette tache ?" |
+| **Contenu** | Endpoints, scripts, commandes | Checklist, regles, ordre des etapes |
+| **Scope** | Un outil | Une tache metier (peut impliquer plusieurs skills) |
+| **Exemple** | "Voici les commandes curl pour Notion" | "Quand on te demande de mettre a jour un projet sur Notion : API REST uniquement, chercher l'ID via search, respecter le rate limit, documenter les modifs" |
 
-Les deux sont complementaires : le template dit **quoi faire et dans quel ordre**, le skill dit **comment le faire techniquement**.
-
-## Structure d'un template
-
-```markdown
-# Template : [Nom]
-> Quand : [declencheur -- quand cet template s'applique]
-> Agents : [qui l'utilise]
-> Skill requis : [dependance technique]
-
-## Regle absolue
-- La regle la plus importante, en gras
-
-## Checklist
-- [ ] Etape 1
-- [ ] Etape 2
-- [ ] Etape 3
-
-## Operations courantes
-[Exemples concrets des cas d'usage les plus frequents]
-
-## Erreurs frequentes
-- **Erreur X** -> Solution Y
-- **Erreur Z** -> Solution W
-```
+Les deux sont complementaires et se referencent mutuellement.
 
 ## Installation
 
@@ -70,29 +40,27 @@ mkdir -p ~/config/openclaw/templates
 
 Le dossier sera accessible dans le container a `/home/node/.openclaw/templates/`.
 
-### 2. Copier les templates
+### 2. Copier le README d'index
 
 ```bash
-# Cloner ce repo
-git clone https://github.com/CapsuleWeb/openclaw-templates.git
-
-# Copier les templates dans votre config
-cp openclaw-templates/templates/*.md ~/config/openclaw/templates/
+cp templates/README.md ~/config/openclaw/templates/README.md
 ```
+
+Ce fichier sert de reference aux agents pour le format et les regles des templates.
 
 ### 3. Ajouter la regle dans vos AGENTS.md
 
 Ajoutez ce bloc dans le fichier AGENTS.md de **chaque agent** qui doit utiliser les templates :
 
 ```markdown
-## Templates -- OBLIGATOIRE
+## Templates, OBLIGATOIRE
 
 Chemin : `/home/node/.openclaw/templates/`
 
 ### Avant d'executer une tache recurrente
 1. Lister les templates : `ls /home/node/.openclaw/templates/`
-2. Si un template correspond a la tache -> le LIRE et le SUIVRE integralement
-3. Le template a priorite sur l'improvisation -- suivre chaque etape
+2. Si un template correspond a la tache, le LIRE et le SUIVRE integralement
+3. Le template a priorite sur l'improvisation, suivre chaque etape
 
 ### Apres une tache recurrente sans template
 Si tu viens d'executer une tache qui reviendra (meme type, meme contexte) et qu'il n'y a pas de template :
@@ -101,9 +69,11 @@ Si tu viens d'executer une tache qui reviendra (meme type, meme contexte) et qu'
 3. Signaler a l'utilisateur : "J'ai cree le template NOM pour cette procedure"
 
 ### Mise a jour
-Si un template est incomplet ou faux -> le corriger IMMEDIATEMENT apres avoir termine la tache.
+Si un template est incomplet ou faux, le corriger IMMEDIATEMENT apres avoir termine la tache.
 Ne pas attendre, ne pas ignorer. Un template obsolete est pire que pas de template.
 ```
+
+Le snippet complet est aussi disponible dans `templates/agents-md-snippet.md`.
 
 ### 4. Redemarrer le gateway
 
@@ -111,55 +81,103 @@ Ne pas attendre, ne pas ignorer. Un template obsolete est pire que pas de templa
 cd ~/openclaw && docker compose restart openclaw-gateway
 ```
 
-## Templates inclus
+## Structure d'un template
 
-### `notion-projet.md`
+Chaque template est un fichier `.md` avec cette structure :
 
-Template generique pour les operations Notion sur un projet.
+```markdown
+# Template : [Nom]
+> Quand : [declencheur, dans quel cas ce template s'applique]
+> Agents : [qui l'utilise]
+> Skill requis : [dependance technique]
 
-**Probleme resolu** : l'agent tente d'ouvrir Notion dans le browser (pas de session active → timeout) au lieu d'utiliser l'API REST.
+## Regle absolue
+- La contrainte la plus importante, en gras
 
-**Regle cle** : TOUJOURS l'API REST, JAMAIS le browser pour Notion.
+## Checklist
+- [ ] Etape 1
+- [ ] Etape 2
+- [ ] Etape 3
 
-### `landing-page.md`
+## Operations courantes
+[Cas d'usage frequents avec exemples concrets]
 
-Pipeline de creation de landing page en 4 etapes.
+## Erreurs frequentes
+- **Piege 1** -> solution
+- **Piege 2** -> solution
+```
 
-**Probleme resolu** : l'agent orchestrateur improvise du HTML inline au lieu de deleguer a l'agent specialise qui a le pipeline design complet.
+### Les 4 couches d'un bon template
 
-**Regle cle** : dispatcher a l'agent qui a les skills design, suivre le pipeline dans l'ordre (design-system → blueprint → elementor → review).
+1. **Le declencheur** : quand est-ce que ce template s'applique ? Un mot-cle dans la demande, un type de tache, un contexte precis
+2. **La checklist** : etapes dans l'ordre, actionnables, sans ambiguite
+3. **Les operations** : exemples concrets des commandes/actions a executer
+4. **Les pieges** : erreurs reelles deja rencontrees (pas des cas theoriques)
 
-## Creer vos propres templates
+## Creer un template
 
 ### Quand creer un template
 
 - Une tache revient regulierement (meme type, meme contexte)
-- Un agent a fait une erreur evitable (mauvais outil, etape oubliee)
+- Un agent a fait une erreur evitable (mauvais outil, etape oubliee, raccourci)
 - Une procedure a plus de 3 etapes et doit etre reproduite a l'identique
+- Un agent improvise au lieu de suivre un workflow prevu
 
 ### Quand NE PAS creer un template
 
 - Tache unique, ponctuelle
-- Procedure deja couverte par un SKILL.md
-- Information qui change souvent (mettre dans STATE.md ou MEMORY.md)
+- Procedure deja entierement couverte par un SKILL.md existant
+- Information volatile qui change souvent (mettre dans STATE.md ou MEMORY.md)
 
 ### Bonnes pratiques
 
-1. **Un template = une procedure**. Pas de mega-template qui couvre 10 cas
-2. **Checklist actionnable**. Chaque etape doit etre executable sans ambiguite
-3. **Erreurs frequentes**. Documenter les pieges reels (pas les cas theoriques)
-4. **Mise a jour immediate**. Un template faux est pire que pas de template
-5. **Nommage clair**. `notion-kavyro.md` pas `template-003.md`
+1. **Un template = une procedure.** Pas de mega-template qui couvre 10 cas differents
+2. **Checklist actionnable.** Chaque etape doit etre executable sans ambiguite
+3. **Erreurs frequentes reelles.** Documenter les pieges deja rencontres, pas les cas theoriques
+4. **Mise a jour immediate.** Un template faux est pire que pas de template
+5. **Nommage clair.** `notion-projet.md` pas `template-003.md`
+6. **Referencer les skills.** Le template dit "lire SKILL.md du skill X avant l'etape Y"
+
+### Cycle de vie
+
+```
+Agent rencontre tache recurrente
+        |
+        v
+Template existe ? ──oui──> Lire et suivre
+        |
+       non
+        |
+        v
+Executer la tache normalement
+        |
+        v
+Creer le template apres execution
+        |
+        v
+Signaler a l'utilisateur
+```
+
+Apres chaque execution d'un template existant, l'agent verifie que le template est toujours correct. Si une etape manque, est obsolete ou fausse, il le corrige immediatement.
+
+## Exemples
+
+Le dossier `examples/` contient des templates d'exemple pour illustrer le format et l'approche :
+
+- `notion-projet.md` : operations Notion via API REST (illustre le cas d'un agent qui choisit le mauvais outil)
+- `landing-page.md` : pipeline de creation de page web (illustre le cas d'un agent qui saute des etapes)
+
+Ces exemples sont a adapter a votre contexte. Copiez-les dans votre dossier `templates/` et modifiez-les selon vos besoins.
 
 ## Contribuer
 
 Les contributions sont bienvenues. Si vous utilisez OpenClaw et avez developpe des templates utiles :
 
 1. Fork ce repo
-2. Ajoutez votre template dans `templates/`
-3. Mettez a jour ce README (section "Templates inclus")
+2. Ajoutez votre template dans `examples/` ou proposez une amelioration du systeme
+3. Mettez a jour ce README si necessaire
 4. Ouvrez une PR avec une description du probleme resolu
 
 ## Licence
 
-MIT
+MIT, libre d'utilisation, modification et redistribution.
